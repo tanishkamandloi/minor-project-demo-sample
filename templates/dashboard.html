@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard · Campus Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">CS</div>
+            <div><span class="brand-name">CampusShield</span><span class="brand-subtitle">Security operations</span></div>
+        </div>
+        <p class="nav-label">Workspace</p>
+        <nav>
+            <a class="nav-link active" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span><span>Overview</span></a>
+            <a class="nav-link" href="{{ url_for('registration.register_student') }}"><span class="nav-icon">＋</span><span>Register student</span></a>
+        </nav>
+        <div class="sidebar-footer"><strong>Recognition system</strong>Monitoring campus access in real time.</div>
+    </aside>
+    <div class="content">
+        <header class="topbar">
+            <div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div>
+            <div class="topbar-meta">
+                <div class="system-status"><span></span> System online</div>
+                <div class="user-chip"><span class="avatar">AD</span> Admin</div>
+            </div>
+        </header>
+        <main class="page">
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Good morning, Admin</p>
+                    <h1>Security overview</h1>
+                    <p class="subtitle">Monitor campus entries and review recognition alerts.</p>
+                </div>
+                <a class="button" href="{{ url_for('registration.register_student') }}">＋&nbsp; Register student</a>
+            </div>
+            <div class="dashboard-grid">
+                <section class="panel log-panel">
+                    <div class="panel-heading">
+                        <div class="panel-title"><span class="icon-box">↕</span><div><p class="eyebrow">Live activity</p><h2>Recent entry log</h2></div></div>
+                        <span class="live-indicator"><span></span> Live</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Name</th><th>Status</th><th>Time</th></tr></thead>
+                            <tbody id="entry-log-body">
+                            {% for log in logs %}
+                                <tr><td>{{ log["name"] }}</td><td><span class="status {{ log['status']|lower }}">{{ log["status"] }}</span></td><td>{{ log["logged_at"] }}</td></tr>
+                            {% else %}<tr><td class="empty" colspan="3">No entry events yet.</td></tr>{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="muted">Automatically refreshed every 5 seconds while recognition is running.</p>
+                </section>
+                <section class="panel alerts-panel">
+                    <div class="panel-heading">
+                        <div class="panel-title"><span class="icon-box">!</span><div><p class="eyebrow">Security alerts</p><h2>Unknown faces</h2></div></div>
+                        <span class="count">{{ alert_photos|length }}</span>
+                    </div>
+                    <div class="alert-grid">
+                    {% for photo in alert_photos %}
+                        <figure class="alert-card"><img src="{{ url_for('alert_photo', filename=photo.name) }}" alt="Unknown face captured at {{ photo.stem }}"><figcaption>{{ photo.stem|replace("_", " ") }}</figcaption></figure>
+                    {% else %}<p class="empty">No unknown-face alerts have been captured.</p>{% endfor %}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    async function refreshLogs() {
+        const response = await fetch("{{ url_for('entry_logs') }}");
+        if (!response.ok) return;
+        const logs = await response.json();
+        document.getElementById("entry-log-body").innerHTML = logs.length ? logs.map(log => `
+            <tr><td>${escapeHtml(log.name)}</td><td><span class="status ${log.status.toLowerCase()}">${escapeHtml(log.status)}</span></td><td>${escapeHtml(log.time)}</td></tr>
+        `).join("") : '<tr><td class="empty" colspan="3">No entry events yet.</td></tr>';
+    }
+    function escapeHtml(value) { return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[character])); }
+    setInterval(refreshLogs, 5000);
+</script>
+</body>
+</html>

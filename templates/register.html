@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register student · Campus Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand"><div class="brand-mark">CS</div><div><span class="brand-name">CampusShield</span><span class="brand-subtitle">Security operations</span></div></div>
+        <p class="nav-label">Workspace</p>
+        <nav>
+            <a class="nav-link" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span><span>Overview</span></a>
+            <a class="nav-link active" href="{{ url_for('registration.register_student') }}"><span class="nav-icon">＋</span><span>Register student</span></a>
+        </nav>
+        <div class="sidebar-footer"><strong>Recognition system</strong>Monitoring campus access in real time.</div>
+    </aside>
+    <div class="content">
+        <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Register student</strong></div><div class="topbar-meta"><div class="system-status"><span></span> System online</div><div class="user-chip"><span class="avatar">AD</span> Admin</div></div></header>
+        <main class="page">
+            <a class="back-link" href="{{ url_for('dashboard') }}">← Back to overview</a>
+            <div class="page-heading"><div><p class="eyebrow">Student directory</p><h1>Register a student</h1><p class="subtitle">Add a verified face profile to the campus recognition system.</p></div></div>
+            <div class="register-layout">
+                <section class="panel form-panel">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}<ul class="flash-list">{% for category, message in messages %}<li class="{{ category }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
+                    {% endwith %}
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <div class="field"><label for="student_name">Student name</label><input id="student_name" name="student_name" placeholder="e.g. Aisha Sharma" required></div>
+                            <div class="field"><label for="roll_number">Roll number</label><input id="roll_number" name="roll_number" placeholder="e.g. CS-2026-014" required></div>
+                            <div class="field full"><label for="department">Department</label><input id="department" name="department" placeholder="e.g. Computer Science and Engineering" required></div>
+                            <div class="field full"><label for="photo">Reference photo</label><input id="photo" name="photo" type="file" accept=".jpg,.jpeg,.png" required><span class="muted">Use a clear, front-facing JPG or PNG with one visible face. Maximum 10 MB.</span></div>
+                        </div>
+                        <div class="form-actions"><button class="button" type="submit">Save student profile</button></div>
+                    </form>
+                </section>
+                <aside class="info-card"><p class="eyebrow">Before you continue</p><h2>Capture a reliable profile</h2><p>A high-quality reference image helps the system identify students accurately in different lighting conditions.</p><ul class="info-list"><li>One face per image</li><li>Face clearly visible and unobstructed</li><li>Use a recent, well-lit photograph</li></ul></aside>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

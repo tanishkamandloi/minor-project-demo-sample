@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+data/*.db
+registered_photos/*
+!registered_photos/.gitkeep
+unknown_alerts/*
+!unknown_alerts/.gitkeep
